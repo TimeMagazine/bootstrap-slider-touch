@@ -70,6 +70,8 @@
 		this.max = this.element.data('slider-max')||options.max;
 		this.step = this.element.data('slider-step')||options.step;
 		this.value = this.element.data('slider-value')||options.value;
+
+		// if multiple handles
 		if (this.value[1]) {
 			this.range = true;
 		}
@@ -136,7 +138,13 @@
 			});
 		}
 
-		if (tooltip === 'show') {
+		// tooltip never vanishes if set to "always"
+		if (tooltip === 'always') {
+			this.picker.on({
+				mouseenter: $.proxy(this.showTooltip, this)
+			});
+			this.showTooltip();
+		} else if (tooltip === 'show') {
 			this.picker.on({
 				mouseenter: $.proxy(this.showTooltip, this),
 				mouseleave: $.proxy(this.hideTooltip, this)
@@ -157,6 +165,7 @@
 			//var left = Math.round(this.percent*this.width);
 			//this.tooltip.css('left', left - this.tooltip.outerWidth()/2);
 			this.over = true;
+			this.tooltip[0].style[this.stylePos] = this.size * this.percentage[0]/100 - (this.orientation === 'vertical' ? this.tooltip.outerHeight()/2 : this.tooltip.outerWidth()/2) +'px';
 		},
 		
 		hideTooltip: function(){
@@ -184,9 +193,15 @@
 				);
 				this.tooltip[0].style[this.stylePos] = this.size * (this.percentage[0] + (this.percentage[1] - this.percentage[0])/2)/100 - (this.orientation === 'vertical' ? this.tooltip.outerHeight()/2 : this.tooltip.outerWidth()/2) +'px';
 			} else {
+				//this.tooltip[0].style[this.stylePos] = this.size * this.percentage[0]/100 - (this.orientation === 'vertical' ? this.tooltip.outerHeight()/2 : this.tooltip.outerWidth()/2) +'px';
+
 				this.tooltipInner.html(
 					this.formater(this.value[0])
 				);
+
+				// allow for resizing
+				this.size = this.picker[0][this.sizePos];
+
 				this.tooltip[0].style[this.stylePos] = this.size * this.percentage[0]/100 - (this.orientation === 'vertical' ? this.tooltip.outerHeight()/2 : this.tooltip.outerWidth()/2) +'px';
 			}
 		},
@@ -352,7 +367,18 @@
 				this.step*100/this.diff
 			];
 			this.layout();
+		},
+
+		setMin: function(min) {
+			this.min = min;
+			this.layout();			
+		},
+
+		setMax: function(max) {
+			this.max = max;
+			this.layout();			
 		}
+
 	};
 
 	$.fn.slider = function ( option, val ) {

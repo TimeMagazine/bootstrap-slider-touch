@@ -1,7 +1,7 @@
 Bootstrap Slider Touch
 ======================
 
-A touch enabled version of Stefan Petre's [Bootstrap Slider][project-site] jQuery plugin. Requires [modernizr.js][modernizr].
+A fork of @heuristicmedia's touch enabled fork of Stefan Petre's [Bootstrap Slider][project-site] jQuery plugin. Requires [modernizr.js][modernizr].
 
 ### Usage
 
