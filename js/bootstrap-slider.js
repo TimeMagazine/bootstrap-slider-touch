@@ -16,9 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ========================================================= */
+
  
 !function( $ ) {
-
 	var Slider = function(element, options) {
 		this.element = $(element);
 		this.picker = $('<div class="slider">'+
@@ -36,7 +36,7 @@
 			this.picker[0].id = this.id;
 		}
 
-		if (typeof Modernizr !== 'undefined' && Modernizr.touch) {
+		if (typeof Browsernizr !== 'undefined' && (Browsernizr.touch || Browsernizr.touchevents)) {
 			this.touchCapable = true;
 		}
 
@@ -62,7 +62,7 @@
 				this.stylePos = 'left';
 				this.mousePos = 'pageX';
 				this.sizePos = 'offsetWidth';
-				this.tooltip.addClass('top')[0].style.top = -this.tooltip.outerHeight() - 14 + 'px';
+				this.tooltip.addClass('top')[0].style.top = -this.tooltip.outerHeight() - 28 + 'px';
 				break;
 		}
 
@@ -201,7 +201,7 @@
 
 				// allow for resizing
 				this.size = this.picker[0][this.sizePos];
-
+				//console.log(this.picker[0], this.size);
 				this.tooltip[0].style[this.stylePos] = this.size * this.percentage[0]/100 - (this.orientation === 'vertical' ? this.tooltip.outerHeight()/2 : this.tooltip.outerWidth()/2) +'px';
 			}
 		},
@@ -338,6 +338,14 @@
 			return Math.max(0, Math.min(100, percentage));
 		},
 
+		getMin: function() {
+			return this.min;
+		},
+
+		getMax: function() {
+			return this.max;
+		},
+
 		getValue: function() {
 			if (this.range) {
 				return this.value;
@@ -375,10 +383,18 @@
 		},
 
 		setMax: function(max) {
+			if (typeof max === "undefined") {
+				return this.max;
+			}
 			this.max = max;
 			this.layout();			
-		}
+		},
 
+		setSize: function(sz) {
+			console.log(sz);
+			this.size = sz;
+			this.layout();
+		}
 	};
 
 	$.fn.slider = function ( option, val ) {
@@ -386,13 +402,14 @@
 			var $this = $(this),
 				data = $this.data('slider'),
 				options = typeof option === 'object' && option;
+
 			if (!data)  {
 				$this.data('slider', (data = new Slider(this, $.extend({}, $.fn.slider.defaults,options))));
 			}
 			if (typeof option == 'string') {
 				data[option](val);
 			}
-		})
+		});
 	};
 
 	$.fn.slider.defaults = {
